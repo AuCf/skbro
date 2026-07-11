@@ -26,3 +26,6 @@ Issues = "https://github.com/AuCf/skbro/issues"
 [project.scripts]
 skbro = "skm.cli:main"
 skm = "skm.cli:main"
+
+[tool.setuptools]
+packages = ["skm", "skbro"]
