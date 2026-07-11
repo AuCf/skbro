@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "skill-manager-skm"
+version = "0.2.0"
+description = "A simple local CLI for creating, installing, sharing, and using AI skills."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+classifiers = [
+  "Environment :: Console",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+
+[project.urls]
+Homepage = "https://github.com/AuCf/skill-manager"
+Repository = "https://github.com/AuCf/skill-manager.git"
+Issues = "https://github.com/AuCf/skill-manager/issues"
+
+[project.scripts]
+skm = "skm.cli:main"
