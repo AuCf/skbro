@@ -16,27 +16,63 @@
 
 ## 安装
 
-需要 Python 3.10 或更高版本。
+需要 Python 3.10 或更高版本。安装后的包名是 `skill-manager-skm`，命令名是 `skm`。
 
-在项目目录开发运行：
+### 从 GitHub 安装（推荐）
 
-```bash
-python -m skm --help
-```
-
-安装为独立命令：
+先确保本机已经安装 `pipx` 和 Git，然后执行：
 
 ```bash
-pipx install git+https://github.com/AuCf/skill-manager.git
+pipx install "git+https://github.com/AuCf/skill-manager.git"
 ```
 
 也可以使用 `uv`：
 
 ```bash
-uv tool install git+https://github.com/AuCf/skill-manager.git
+uv tool install "git+https://github.com/AuCf/skill-manager.git"
 ```
 
-从本地源码安装时，把地址换成项目目录或 `.` 即可。
+安装完成后验证：
+
+```bash
+skm --version
+skm --help
+```
+
+### 从本地源码安装
+
+```bash
+git clone https://github.com/AuCf/skill-manager.git
+cd skill-manager
+pipx install .
+```
+
+使用 `uv` 时：
+
+```bash
+uv tool install .
+```
+
+### 开发运行
+
+不安装命令，直接在源码目录运行：
+
+```bash
+python -m skm --help
+```
+
+需要让已安装命令直接读取当前源码时，可以使用可编辑安装：
+
+```bash
+pipx install --editable .
+```
+
+### 更新与卸载
+
+```bash
+pipx upgrade skill-manager-skm
+pipx uninstall skill-manager-skm
+```
 
 ## 最快上手
 
