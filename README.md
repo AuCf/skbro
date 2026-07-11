@@ -20,7 +20,7 @@
 
 ### PyPI 安装
 
-正式发布到 PyPI 后，推荐使用：
+推荐使用：
 
 ```bash
 pipx install skbro
