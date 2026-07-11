@@ -36,6 +36,11 @@ from .storage import (
 VERSION = __version__
 
 
+def command_name() -> str:
+    invoked = Path(sys.argv[0]).stem.casefold()
+    return invoked if invoked in {"skbro", "skm"} else "skbro"
+
+
 def truncate(text: str, limit: int = 36) -> str:
     return text if len(text) <= limit else text[: limit - 1] + "..."
 
@@ -63,7 +68,7 @@ def command_init(_args: argparse.Namespace) -> int:
         if any((created_home, created_config, created_registry))
         else "already initialized"
     )
-    print(f"Skill Manager {status}.")
+    print(f"SKBro {status}.")
     print()
     print(f"Home: {skm_home()}")
     print(f"Config: {config_path()}")
@@ -89,7 +94,7 @@ def command_create(args: argparse.Namespace) -> int:
     print(f"Path: {created}")
     print(f"Entry: {created / 'SKILL.md'}")
     print()
-    print(f"Next: skm add {created}")
+    print(f"Next: {command_name()} add {created}")
     return 0
 
 
@@ -343,7 +348,7 @@ def command_pack(args: argparse.Namespace) -> int:
 def command_doctor(args: argparse.Namespace) -> int:
     issues = run_doctor(repair=args.repair)
     if not issues:
-        print("Skill Manager is healthy.")
+        print("SKBro is healthy.")
         return 0
     for issue in issues:
         suffix = " [repaired]" if issue.repaired else ""
@@ -371,7 +376,7 @@ def command_config(args: argparse.Namespace) -> int:
         return 0
 
     if args.key is None or args.value is None:
-        raise SkmError("Usage: skm config set <key> <value>")
+        raise SkmError(f"Usage: {command_name()} config set <key> <value>")
     key = args.key
     value = args.value
     if key == "link_mode":
@@ -398,11 +403,12 @@ def _add_metadata_arguments(parser: argparse.ArgumentParser, *, require_name: bo
 
 
 def build_parser() -> argparse.ArgumentParser:
+    prog = command_name()
     parser = argparse.ArgumentParser(
-        prog="skm",
-        description="Create, install, share, and use local AI skills.",
+        prog=prog,
+        description="SKBro - your local AI skill manager.",
     )
-    parser.add_argument("--version", action="version", version=f"skm {VERSION}")
+    parser.add_argument("--version", action="version", version=f"{prog} {VERSION}")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     init_parser = subparsers.add_parser("init", help="Initialize local storage.")

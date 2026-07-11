@@ -26,13 +26,14 @@ from skm.storage import (
     load_registry,
     registry_path,
     skill_source_path,
+    skm_home,
     write_json_atomic,
 )
 
 
 class SkmTestCase(unittest.TestCase):
     def setUp(self) -> None:
-        self.temp = tempfile.TemporaryDirectory(prefix="skm-test-")
+        self.temp = tempfile.TemporaryDirectory(prefix="skbro-test-")
         self.root = Path(self.temp.name)
         self.home = self.root / "home"
         self.workspace = self.root / "workspace"
@@ -40,7 +41,7 @@ class SkmTestCase(unittest.TestCase):
         self.workspace.mkdir()
         self.project.mkdir()
         self.previous_cwd = Path.cwd()
-        self.environment = patch.dict(os.environ, {"SKM_HOME": str(self.home)})
+        self.environment = patch.dict(os.environ, {"SKBRO_HOME": str(self.home)})
         self.environment.start()
 
     def tearDown(self) -> None:
@@ -211,6 +212,14 @@ class SkmTestCase(unittest.TestCase):
         with self.assertRaisesRegex(SkmError, "inside the project"):
             load_config()
 
+    def test_legacy_skm_home_environment_variable_still_works(self) -> None:
+        legacy_home = self.root / "legacy-home"
+        with patch.dict(
+            os.environ,
+            {"SKBRO_HOME": "", "SKM_HOME": str(legacy_home)},
+        ):
+            self.assertEqual(skm_home(), legacy_home.resolve())
+
     def test_registry_cannot_reference_files_outside_home(self) -> None:
         init_storage()
         outside = self.root / "outside.md"
@@ -226,7 +235,7 @@ class SkmTestCase(unittest.TestCase):
         }
         write_json_atomic(registry_path(), registry)
         skill = load_registry()["skills"]["unsafe"]
-        with self.assertRaisesRegex(SkmError, "outside Skill Manager home"):
+        with self.assertRaisesRegex(SkmError, "outside SKBro home"):
             skill_source_path(skill)
 
     def test_original_single_file_registry_remains_usable(self) -> None:

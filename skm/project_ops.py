@@ -297,7 +297,7 @@ def sync_project_skills(
                         f"Project copy was modified: {target}\n"
                         "Use --force to replace local changes."
                     )
-            with tempfile.TemporaryDirectory(prefix=".skm-sync-", dir=target.parent) as temp:
+            with tempfile.TemporaryDirectory(prefix=".skbro-sync-", dir=target.parent) as temp:
                 staged = Path(temp) / target.name
                 backup = Path(temp) / "backup"
                 try:

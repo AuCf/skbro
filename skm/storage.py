@@ -11,7 +11,8 @@ from .errors import SkmError
 from .models import validate_skill_name
 
 
-APP_DIR_NAME = ".skill_manager"
+APP_DIR_NAME = ".skbro"
+LEGACY_APP_DIR_NAME = ".skill_manager"
 CONFIG_FILE = "config.json"
 REGISTRY_FILE = "registry.json"
 SKILLS_DIR = "skills"
@@ -35,10 +36,14 @@ def now_iso() -> str:
 
 
 def skm_home() -> Path:
-    override = os.environ.get("SKM_HOME")
+    override = os.environ.get("SKBRO_HOME") or os.environ.get("SKM_HOME")
     if override:
         return Path(override).expanduser().resolve()
-    return Path.home() / APP_DIR_NAME
+    current = Path.home() / APP_DIR_NAME
+    legacy = Path.home() / LEGACY_APP_DIR_NAME
+    if current.exists() or not legacy.exists():
+        return current
+    return legacy
 
 
 def config_path() -> Path:
@@ -90,7 +95,7 @@ def write_json_atomic(path: Path, data: dict[str, Any]) -> None:
 def init_storage() -> tuple[bool, bool, bool]:
     home = skm_home()
     if home.exists() and not home.is_dir():
-        raise SkmError(f"Skill Manager home is not a directory: {home}")
+        raise SkmError(f"SKBro home is not a directory: {home}")
     created_home = not home.exists()
     home.mkdir(parents=True, exist_ok=True)
 
@@ -215,7 +220,7 @@ def safe_home_path(relative: str, label: str = "path") -> Path:
     try:
         candidate.relative_to(skm_home().resolve())
     except ValueError as exc:
-        raise SkmError(f"Invalid {label}; it points outside Skill Manager home.") from exc
+        raise SkmError(f"Invalid {label}; it points outside SKBro home.") from exc
     return candidate
 
 

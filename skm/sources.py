@@ -35,7 +35,7 @@ def _looks_like_git(value: str) -> bool:
 
 
 def _download(url: str, destination: Path) -> None:
-    request = urllib.request.Request(url, headers={"User-Agent": "skm/0.2"})
+    request = urllib.request.Request(url, headers={"User-Agent": "skbro/0.3"})
     try:
         with urllib.request.urlopen(request, timeout=30) as response:
             length = response.headers.get("Content-Length")
@@ -138,7 +138,7 @@ def prepare_source(
             yield resolved, {"type": "local", "location": str(resolved)}
             return
         if resolved.is_file() and resolved.suffix.lower() == ".zip":
-            with tempfile.TemporaryDirectory(prefix="skm-zip-") as temp:
+            with tempfile.TemporaryDirectory(prefix="skbro-zip-") as temp:
                 extracted = Path(temp) / "content"
                 extracted.mkdir()
                 _safe_extract_zip(resolved, extracted)
@@ -151,7 +151,7 @@ def prepare_source(
         raise SkmError(f"Unsupported local skill source: {resolved}")
 
     if force_git or _looks_like_git(source):
-        with tempfile.TemporaryDirectory(prefix="skm-git-") as temp:
+        with tempfile.TemporaryDirectory(prefix="skbro-git-") as temp:
             checkout = Path(temp) / "checkout"
             _clone_git(source, checkout, ref)
             root = _find_skill_root(checkout)
@@ -169,7 +169,7 @@ def prepare_source(
         suffix = Path(parsed.path).suffix.lower()
         if suffix not in {".zip", ".md"}:
             raise SkmError("Remote sources must be a Markdown file, ZIP archive, or Git URL.")
-        with tempfile.TemporaryDirectory(prefix="skm-url-") as temp:
+        with tempfile.TemporaryDirectory(prefix="skbro-url-") as temp:
             downloaded = Path(temp) / f"download{suffix}"
             _download(source, downloaded)
             if suffix == ".md":

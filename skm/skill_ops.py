@@ -177,7 +177,7 @@ def add_local_skill(
         if destination.exists():
             raise SkmError(
                 f"Skill storage already exists without a registry entry: {destination}\n"
-                "Run 'skm doctor' before trying again."
+                "Run 'skbro doctor' before trying again."
             )
 
         timestamp = now_iso()
@@ -285,7 +285,7 @@ def remove_skill(name: str) -> Path:
     if links or legacy_links:
         raise SkmError(
             f"Skill is still used by one or more projects: {name}\n"
-            "Run 'skm unuse' in those projects first."
+            "Run 'skbro unuse' in those projects first."
         )
     source = skill_source_path(skill)
     del registry["skills"][name]

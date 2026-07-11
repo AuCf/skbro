@@ -1,4 +1,4 @@
-# Skill Manager 设计说明
+# SKBro 设计说明
 
 ## 产品原则
 
@@ -12,7 +12,7 @@
 ## 数据目录
 
 ```text
-~/.skill_manager/
+~/.skbro/
 ├── config.json
 ├── registry.json
 ├── skills/
@@ -33,7 +33,7 @@
 - `url`：HTTP Markdown 或 ZIP；
 - `git`：Git 仓库，可记录分支或标签。
 
-`skm update` 会重新读取来源并原子替换中央 Skill。项目使用软链接时会立即看到新内容；复制模式通过 `skm status` 和 `skm sync` 更新。
+`skbro update` 会重新读取来源并原子替换中央 Skill。项目使用软链接时会立即看到新内容；复制模式通过 `skbro status` 和 `skbro sync` 更新。
 
 ## 项目目标
 
@@ -45,11 +45,11 @@
 | `codex` | `.codex/skills` |
 | `claude` | `.claude/skills` |
 
-目标目录必须是项目内相对路径。用户可以通过 `skm config set target.<name> <path>` 添加目标。
+目标目录必须是项目内相对路径。用户可以通过 `skbro config set target.<name> <path>` 添加目标。
 
 ## 安全边界
 
-- registry 中的 Skill 路径必须位于 `SKM_HOME`；
+- registry 中的 Skill 路径必须位于 `SKBRO_HOME`；
 - 项目目标必须位于当前项目；
 - ZIP 导入拒绝绝对路径、`..` 和符号链接；
 - Skill 目录导入拒绝符号链接，确保分享包可移植；
@@ -60,6 +60,7 @@
 ## 模块职责
 
 ```text
+skbro/             `python -m skbro` 公开入口
 skm/cli.py          命令解析和输出
 skm/models.py       Skill manifest 模型与校验
 skm/storage.py      配置、registry 和安全路径
@@ -69,6 +70,8 @@ skm/project_ops.py  项目使用、状态和同步
 skm/sharing.py      ZIP 打包
 skm/doctor.py       健康检查与安全修复
 ```
+
+内部模块继续使用 `skm`，以兼容已有安装和导入；公开品牌、发行包和主命令统一使用 `skbro`。
 
 ## 后续演进边界
 

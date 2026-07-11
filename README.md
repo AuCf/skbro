@@ -1,77 +1,69 @@
-# Skill Manager (`skm`)
+# SKBro
 
-`skm` 是一个本地优先、零服务依赖的 AI Skill 管理工具。
+> Your local AI skill manager.
 
-它解决一件事：把散落在电脑和项目里的 Skill 统一管理，并能简单地安装、使用、更新和分享。
+`SKBro` 是一个本地优先、零服务依赖的 AI Skill 管理工具，用来创建、安装、搜索、使用、更新和分享 Skill。
 
 ## 特点
 
-- 支持完整 Skill 目录，也兼容单个 Markdown 文件；
+- 支持完整 Skill 目录和单个 Markdown 文件；
 - 支持本地目录、ZIP、HTTP URL 和 Git 仓库；
 - 支持软链接和复制两种项目使用方式；
 - 内置 Codex、Claude 和通用项目目录；
-- Skill 可打包成 ZIP 直接分享；
+- 可以把 Skill 打包成 ZIP 分享；
 - 本地 JSON 存储，无账号、数据库或后台服务；
-- 只使用 Python 标准库。
+- 核心只使用 Python 标准库。
 
 ## 安装
 
-需要 Python 3.10 或更高版本。安装后的包名是 `skill-manager-skm`，命令名是 `skm`。
+需要 Python 3.10 或更高版本。
 
-### 从 GitHub 安装（推荐）
+### PyPI 安装
 
-先确保本机已经安装 `pipx` 和 Git，然后执行：
+正式发布到 PyPI 后，推荐使用：
 
 ```bash
-pipx install "git+https://github.com/AuCf/skill-manager.git"
+pipx install skbro
 ```
 
-也可以使用 `uv`：
+或：
 
 ```bash
-uv tool install "git+https://github.com/AuCf/skill-manager.git"
+uv tool install skbro
 ```
 
-安装完成后验证：
+### 从 GitHub 安装
 
 ```bash
-skm --version
-skm --help
+pipx install "git+https://github.com/AuCf/skbro.git"
 ```
 
 ### 从本地源码安装
 
 ```bash
-git clone https://github.com/AuCf/skill-manager.git
-cd skill-manager
+git clone https://github.com/AuCf/skbro.git
+cd skbro
 pipx install .
 ```
 
-使用 `uv` 时：
+开发时也可以直接运行：
 
 ```bash
-uv tool install .
+python -m skbro --help
 ```
 
-### 开发运行
-
-不安装命令，直接在源码目录运行：
+验证安装：
 
 ```bash
-python -m skm --help
+skbro --version
+skbro --help
 ```
 
-需要让已安装命令直接读取当前源码时，可以使用可编辑安装：
+更新或卸载：
 
 ```bash
-pipx install --editable .
-```
-
-### 更新与卸载
-
-```bash
-pipx upgrade skill-manager-skm
-pipx uninstall skill-manager-skm
+pipx upgrade skbro
+pipx uninstall skbro
 ```
 
 ## 最快上手
@@ -79,12 +71,12 @@ pipx uninstall skill-manager-skm
 创建一个 Skill：
 
 ```bash
-skm create api-reviewer \
+skbro create api-reviewer \
   --description "Review API designs" \
   --tags api,review
 ```
 
-生成的目录：
+生成：
 
 ```text
 api-reviewer/
@@ -92,111 +84,105 @@ api-reviewer/
 └── skill.json
 ```
 
-安装并在当前项目使用：
+安装并用于当前项目：
 
 ```bash
-skm add ./api-reviewer
-skm use api-reviewer
+skbro add ./api-reviewer
+skbro use api-reviewer
 ```
 
-默认会出现在：
+默认位置：
 
 ```text
 .skills/api-reviewer/
 ```
 
-使用到 Codex 或 Claude 的项目目录：
+用于 Codex 或 Claude：
 
 ```bash
-skm use api-reviewer --target codex
-skm use api-reviewer --target claude
+skbro use api-reviewer --target codex
+skbro use api-reviewer --target claude
 ```
 
 ## 安装别人分享的 Skill
 
-本地目录或 Markdown：
-
 ```bash
-skm add ./my-skill
-skm add ./my-skill.md --name my-skill
+# 本地目录或 Markdown
+skbro add ./my-skill
+skbro add ./my-skill.md --name my-skill
+
+# ZIP
+skbro add ./my-skill-1.0.0.zip
+
+# HTTP URL
+skbro add https://example.com/my-skill-1.0.0.zip
+
+# Git
+skbro add https://github.com/example/my-skill.git
+skbro add https://github.com/example/my-skill.git --ref v1.0.0
 ```
-
-ZIP 包：
-
-```bash
-skm add ./my-skill-1.0.0.zip
-```
-
-HTTP URL：
-
-```bash
-skm add https://example.com/my-skill-1.0.0.zip
-```
-
-Git 仓库：
-
-```bash
-skm add https://github.com/example/my-skill.git
-skm add https://github.com/example/my-skill.git --ref v1.0.0
-```
-
-Git 仓库根目录需要包含 `SKILL.md`，推荐同时包含 `skill.json`。
 
 ## 日常管理
 
 ```bash
-skm list
-skm search API
-skm info api-reviewer
-skm status
-skm update api-reviewer
-skm unuse api-reviewer
-skm remove api-reviewer
-skm doctor
+skbro list
+skbro search API
+skbro info api-reviewer
+skbro status
+skbro update api-reviewer
+skbro unuse api-reviewer
+skbro remove api-reviewer
+skbro doctor
 ```
 
-不指定名称时，`skm update` 会更新所有有来源记录的 Skill。
+不指定名称时，`skbro update` 会更新所有有来源记录的 Skill。
 
-### 复制模式
+## 软链接与复制模式
 
-Windows 无法创建软链接，或希望项目包含完整副本时：
+默认使用软链接。中央 Skill 更新后，项目立即生效：
 
 ```bash
-skm use api-reviewer --copy
+skbro update api-reviewer
 ```
 
-中央 Skill 更新后，`status` 会把旧副本显示为 `outdated`：
+Windows 无法创建软链接，或希望项目保留完整副本时：
 
 ```bash
-skm status
-skm sync api-reviewer
+skbro use api-reviewer --copy
 ```
+
+复制模式更新后需要同步：
+
+```bash
+skbro status
+skbro sync api-reviewer
+```
+
+如果项目副本被人工修改，`sync` 和 `unuse` 会拒绝覆盖或删除；确认放弃修改时使用 `--force`。
 
 ## 分享 Skill
 
-打包已安装的 Skill：
-
 ```bash
-skm pack api-reviewer
+skbro pack api-reviewer
 ```
 
-输出文件示例：
+会生成：
 
 ```text
 api-reviewer-0.1.0.zip
 ```
 
-把 ZIP 发给别人，对方执行：
+对方安装：
 
 ```bash
-skm add ./api-reviewer-0.1.0.zip
+skbro add ./api-reviewer-0.1.0.zip
 ```
 
-也可以把 Skill 目录放到独立 Git 仓库中直接分享。
+也可以把 Skill 目录放进独立 Git 仓库分享。
 
 ## Skill 格式
 
-最小格式只有一个入口文件：
+最小格式：
 
 ```text
 my-skill/
@@ -232,60 +218,36 @@ my-skill/
 
 ## 配置
 
-查看配置：
-
 ```bash
-skm config
-```
-
-修改默认关联方式：
-
-```bash
-skm config set link_mode copy
-```
-
-修改默认目标：
-
-```bash
-skm config set default_target codex
-```
-
-增加自定义项目目录：
-
-```bash
-skm config set target.cursor .cursor/skills
-skm use api-reviewer --target cursor
+skbro config
+skbro config set link_mode copy
+skbro config set default_target codex
+skbro config set target.cursor .cursor/skills
 ```
 
 默认数据目录：
 
 ```text
-~/.skill_manager/
+~/.skbro/
 ├── config.json
 ├── registry.json
 └── skills/
 ```
 
-测试或多环境使用时，可设置 `SKM_HOME`。
+测试或多环境使用时，可设置 `SKBRO_HOME`。
 
 ## 旧版兼容
 
-原有命令仍然可用：
-
-```bash
-skm register ./skill.md --name skill-name
-skm link skill-name
-skm unlink skill-name
-```
-
-旧版 `registry/<name>.md` 数据也可以继续读取和取消关联。
+- `skm` 命令继续作为兼容别名；
+- `SKM_HOME` 环境变量继续可用；
+- 已存在 `~/.skill_manager` 时会继续使用，不会丢失原数据；
+- `register/link/unlink` 旧命令继续可用；
+- 旧版单 Markdown registry 可以继续读取。
 
 ## 开发验证
-
-运行测试：
 
 ```bash
 python -B -m unittest discover -s tests -v
 ```
 
-当前测试覆盖本地生命周期、Markdown 转换、ZIP/HTTP/Git 安装、更新同步、路径安全和健康检查。
+测试覆盖本地生命周期、旧版兼容、Markdown 转换、ZIP/HTTP/Git 安装、更新同步、修改保护、路径安全和健康检查。

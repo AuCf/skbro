@@ -1,5 +1,7 @@
 # Skill Manager MVP 设计文档
 
+> 历史文档：项目现已更名为 `SKBro`。当前设计和命令请以 `README.md` 与 `DESIGN.md` 为准。
+
 > 项目代号：`skm`  
 > 全称：Skill Manager  
 > 定位：一个本地极简 CLI 工具，用于统一管理、搜索、注册和关联 AI Skill 文件。
