@@ -11,3 +11,4 @@ venv/
 .codex/skills/
 .claude/skills/
 *.zip
+.flow/
